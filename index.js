@@ -101,7 +101,17 @@ silentlyRunner.prototype = {
 
 module.exports = new silentlyRunner;
 
-// 直接运行程序
-if(!module.parent){
-    require('./bin/app');
+if(module.parent){
+    return;
 }
+var appName = process.argv[2];
+if(!appName){
+    return;
+}
+if(appName.indexOf('-') == 0){
+    module.exports.stop();
+    return;
+}
+
+module.exports.start(appName);
+
