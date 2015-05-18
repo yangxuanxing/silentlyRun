@@ -1,6 +1,6 @@
 {
 	"name": "silently-run",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "run a node app in background",
 	"keywords": ["background","blocked"],
 	"email": "yangxuanxing@gmail.com"

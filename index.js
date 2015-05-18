@@ -43,8 +43,7 @@ function start(appPath) {
 }
 
 function _start(appPath) {
-    var fileState = fs.statSync(appPath);
-    var pathLog = fileState.isFile() ? path.resolve(path.dirname(appPath), 'silently-run.log') : path.resolve(appPath, 'silently-run.log');
+    var pathLog = path.resolve(require.main.filename, '../silently-run.log');
     var fsLog = fs.openSync(pathLog, 'w');
 
     var child = childProcess.spawn('node', [appPath], {
