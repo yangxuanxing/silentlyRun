@@ -4,6 +4,7 @@ var path = require('path');
 var util = require('util');
 
 var pathPid = path.resolve(__dirname, '.running');
+var pathLog = path.resolve(require.main.filename, '../silently-run.log');
 
 function showError(strError) {
     console.log('\x1b[31m' + strError + '\x1b[0m');
@@ -43,15 +44,30 @@ function start(appPath) {
 }
 
 function _start(appPath) {
-    var pathLog = path.resolve(require.main.filename, '../silently-run.log');
     var fsLog = fs.openSync(pathLog, 'w');
+    var streamLog = fs.createReadStream(pathLog);
+    streamLog.on('data', function(data){
+        console.log('script error!');
+        console(String(data));
+    });
 
     var child = childProcess.spawn('node', [appPath], {
         detached: true,
         stdio: ['ignore', 'ignore', fsLog]
     });
-    fs.writeFileSync(pathPid, child.pid);
-    child.unref();
+
+    console.log('Starting ' + appPath);
+    var timerNoError = setTimeout(function () {
+        fs.writeFileSync(pathPid, child.pid);
+        child.unref();
+        console.log('Service Started!');
+    }, 3000);
+
+    child.on('exit', function (code) {
+        clearTimeout(timerNoError);
+        showError('script exit! See silently-run.log');
+    });
+    
 }
 
 function stop(callback) {
