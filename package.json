@@ -1,7 +1,18 @@
 {
 	"name": "silently-run",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "run a node app in background",
 	"keywords": ["background","blocked"],
-	"email": "yangxuanxing@gmail.com"
+	"email": "yangxuanxing@gmail.com",
+	"bin": {
+		"silentlyRun": "./index.js"
+	},
+	"repository": {
+		"type" : "git",
+		"url" : "https://github.com/518yxx/silentlyRun"
+	},
+	"scripts": {
+		"start": "node index.js",
+		"stop": "node index.js -s"
+	}
 }

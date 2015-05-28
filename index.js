@@ -36,7 +36,7 @@ function checkRunning(pid, callback) {
 }
 
 function start(appPath) {
-    this.stop(function(stopError){
+    stop(function(stopError){
         if(!stopError){
             _start(appPath);
         }
@@ -107,14 +107,8 @@ function stop(callback) {
     });
 }
 
-var silentlyRunner = function() {};
-
-silentlyRunner.prototype = {
-    start: start,
-    stop: stop
-};
-
-module.exports = new silentlyRunner;
+exports.start = start;
+exports.stop = stop;
 
 if(module.parent){
     return;
@@ -124,9 +118,10 @@ if(!appName){
     return;
 }
 if(appName.indexOf('-') == 0){
-    module.exports.stop();
+    stop(function(err){
+        console.log(err || 'Service Stopped!');
+    });
     return;
 }
 
-module.exports.start(appName);
-
+start(appName);
