@@ -4,11 +4,11 @@ var path = require('path');
 var util = require('util');
 
 var pathPid = path.resolve(__dirname, '.running');
-var pathLog = path.resolve(require.main.filename, '../silently-run.log');
+var pathLog = path.resolve(__dirname, 'silently-run.log');
 
 function showError(strError) {
     console.log('\x1b[31m' + strError + '\x1b[0m');
-};
+}
 
 // check if pid exist
 function checkRunning(pid, callback) {
@@ -36,6 +36,7 @@ function checkRunning(pid, callback) {
 }
 
 function start(appPath) {
+    appPath = path.resolve(path.dirname(module.parent.filename), appPath);
     stop(function(stopError){
         if(!stopError){
             _start(appPath);
@@ -51,7 +52,7 @@ function _start(appPath) {
         console(String(data));
     });
 
-    var child = childProcess.spawn('node', [appPath], {
+    var child = childProcess.spawn('node', ['--harmony', appPath], {
         detached: true,
         stdio: ['ignore', 'ignore', fsLog]
     });
@@ -63,9 +64,9 @@ function _start(appPath) {
         console.log('Service Started!');
     }, 3000);
 
-    child.on('exit', function (code) {
+    child.on('exit', function () {
         clearTimeout(timerNoError);
-        showError('script exit! See silently-run.log');
+        showError(fs.readFileSync(pathLog));
     });
     
 }
@@ -117,7 +118,7 @@ var appName = process.argv[2];
 if(!appName){
     return;
 }
-if(appName.indexOf('-') == 0){
+if(appName.indexOf('-') === 0){
     stop(function(err){
         console.log(err || 'Service Stopped!');
     });
